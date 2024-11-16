@@ -30,20 +30,6 @@ type Sigmoid<A extends number> = Div<
     Add<1, Exp<E, Mul<A, -1>>>
 >;
 
-type MakeArrayHelper<N extends number, Result extends number[]> = 
-  Result['length'] extends N 
-    ? Result
-    : MakeArrayHelper<N, [...Result, Rand<0, 1>]>;
-
-type MakeArray<N extends number> = MakeArrayHelper<N, []>;
-
-type MakeMatrixHelper<Rows extends number, Cols extends number, Result extends number[][]> = 
-  Result['length'] extends Rows 
-    ? Result
-    : MakeMatrixHelper<Rows, Cols, [...Result, MakeArray<Cols>]>;
-
-type MakeMatrix<Rows extends number, Cols extends number> = MakeMatrixHelper<Rows, Cols, []>;
-
 // Dot Product
 type Dot<
     A extends number[],
@@ -69,45 +55,37 @@ type NeuronForward<
     Input extends number[],
     Weights extends number[],
     Bias extends number
-> = Print<Sigmoid<
+> = Sigmoid<
     Add<
         Dot<Input, Weights>,
         Bias
     >
->>;
+>;
 
+// Forward Pass for Entire Layer
 type LayerForward<
     Input extends number[],
     Weights extends number[][],
     Biases extends number[]
-> = LayerForwardImpl<Input, Weights, Biases, 0>;
+> = [
+    NeuronForward<Input, Weights[0], Biases[0]>,
+    NeuronForward<Input, Weights[1], Biases[1]>,
+    NeuronForward<Input, Weights[2], Biases[2]>,
+    NeuronForward<Input, Weights[3], Biases[3]>
+];
 
-type LayerForwardImpl<
-    Input extends number[],
-    Weights extends number[][],
-    Biases extends number[],
-    Index extends number,
-> = Index extends Weights['length']
-    ? []
-    : [NeuronForward<Input, Weights[Index], Biases[Index]>, ...LayerForwardImpl<Input, Weights, Biases, Increment<Index>>];
+// Sample Data
+type image = [0.9, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1];
 
-type InputSize = 784;    
-type HiddenSize = 2;   
-type HiddenSize2 = 64;
-type OutputSize = 10;
+type Weights = [
+    [0.1, -0.2,  0.3,  0.1, 0.0, 0.0, 0.0, 0.0, 0.0],
+    [0.2,  0.3, -0.1, -0.2, 0.0, 0.0, 0.0, 0.0, 0.0],
+    [0.0,  0.1,  0.2,  0.3, 0.0, 0.0, 0.0, 0.0, 0.0],
+    [0.4, -0.1,  0.1,  0.2, 0.0, 0.0, 0.0, 0.0, 0.0]
+];
 
-type image = MakeArray<InputSize>; 
-type weights1 = MakeMatrix<HiddenSize, InputSize>;
-type biases1 = MakeArray<HiddenSize>;
+type Biases = [0.1, 0.1, 0.1, 0.1];
 
-// type weights2 = MakeMatrix<HiddenSize2, HiddenSize>;
-// type biases2 = MakeArray<HiddenSize2>;
-
-// type weights3 = MakeMatrix<OutputSize, HiddenSize2>;
-// type biases3 = MakeArray<OutputSize>;
-
-type ForwardResult = LayerForward<image, weights1, biases1>;
-// type Forward2Result = LayerForward<ForwardResult, weights2, biases2>;
-// type Forward3Result = LayerForward<Forward2Result, weights3, biases3>;
+type ForwardResult = LayerForward<image, Weights, Biases>;
 
 type Main<Args extends string[]> = Print<ForwardResult>;
