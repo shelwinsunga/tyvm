@@ -15,12 +15,12 @@ export type And<A extends boolean, B extends boolean> = boolean;
 export type Or<A extends boolean, B extends boolean> = boolean;
 
 // Increment Helper without Default Parameters
-type IncrementHelper<I extends number, Acc extends any[]> = 
-  Acc['length'] extends I 
-    ? [...Acc, any]['length'] 
-    : IncrementHelper<I, [...Acc, any]>;
+// type IncrementHelper<I extends number, Acc extends any[]> = 
+//   Acc['length'] extends I 
+//     ? [...Acc, any]['length'] 
+//     : IncrementHelper<I, [...Acc, any]>;
 
-type Increment<I extends number> = IncrementHelper<I, []>;
+// type Increment<I extends number> = IncrementHelper<I, []>;
 
 // Sigmoid Function
 type E = 2.718281828459045;
@@ -60,7 +60,7 @@ type DotImpl<
     : DotImpl<
           A,
           B,
-          Increment<I>,
+          Add<I, 1>,
           Add<Sum, Mul<A[I], B[I]>>
       >;
 
@@ -69,12 +69,12 @@ type NeuronForward<
     Input extends number[],
     Weights extends number[],
     Bias extends number
-> = Print<Sigmoid<
+> = Sigmoid<
     Add<
         Dot<Input, Weights>,
         Bias
     >
->>;
+>;
 
 type LayerForward<
     Input extends number[],
@@ -89,10 +89,10 @@ type LayerForwardImpl<
     Index extends number,
 > = Index extends Weights['length']
     ? []
-    : [NeuronForward<Input, Weights[Index], Biases[Index]>, ...LayerForwardImpl<Input, Weights, Biases, Increment<Index>>];
+    : [NeuronForward<Input, Weights[Index], Biases[Index]>, ...LayerForwardImpl<Input, Weights, Biases, Add<Index, 1>>];
 
-type InputSize = 784;    
-type HiddenSize = 2;   
+type InputSize = 5;    
+type HiddenSize = 1;   
 type HiddenSize2 = 64;
 type OutputSize = 10;
 
