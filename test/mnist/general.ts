@@ -15,12 +15,12 @@ export type And<A extends boolean, B extends boolean> = boolean;
 export type Or<A extends boolean, B extends boolean> = boolean;
 
 // Increment Helper without Default Parameters
-// type IncrementHelper<I extends number, Acc extends any[]> = 
-//   Acc['length'] extends I 
-//     ? [...Acc, any]['length'] 
-//     : IncrementHelper<I, [...Acc, any]>;
+type IncrementHelper<I extends number, Acc extends any[]> = 
+  Acc['length'] extends I 
+    ? [...Acc, any]['length'] 
+    : IncrementHelper<I, [...Acc, any]>;
 
-// type Increment<I extends number> = IncrementHelper<I, []>;
+type Increment<I extends number> = IncrementHelper<I, []>;
 
 // Sigmoid Function
 type E = 2.718281828459045;
@@ -91,10 +91,10 @@ type LayerForwardImpl<
     ? []
     : [NeuronForward<Input, Weights[Index], Biases[Index]>, ...LayerForwardImpl<Input, Weights, Biases, Add<Index, 1>>];
 
-type InputSize = 5;    
-type HiddenSize = 1;   
-type HiddenSize2 = 64;
-type OutputSize = 10;
+type InputSize = 64;    
+type HiddenSize = 10;   
+// type HiddenSize2 = 64;
+// type OutputSize = 10;
 
 type image = MakeArray<InputSize>; 
 type weights1 = MakeMatrix<HiddenSize, InputSize>;
@@ -105,6 +105,10 @@ type biases1 = MakeArray<HiddenSize>;
 
 // type weights3 = MakeMatrix<OutputSize, HiddenSize2>;
 // type biases3 = MakeArray<OutputSize>;
+
+// type image = [0.9, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1];
+// type weights1 = [[0.1, -0.2, 0.3, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0], [0.2, 0.3, -0.1, -0.2, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.1, 0.2, 0.3, 0.0, 0.0, 0.0, 0.0, 0.0], [0.4, -0.1, 0.1, 0.2, 0.0, 0.0, 0.0, 0.0, 0.0]];
+// type biases1 = [0.1, 0.1, 0.1, 0.1];
 
 type ForwardResult = LayerForward<image, weights1, biases1>;
 // type Forward2Result = LayerForward<ForwardResult, weights2, biases2>;
