@@ -13,7 +13,7 @@ export type Gte<A extends number, B extends number> = boolean;
 export type Eq<A extends number, B extends number> = boolean;
 export type And<A extends boolean, B extends boolean> = boolean;
 export type Or<A extends boolean, B extends boolean> = boolean;
-
+export type Max<A extends number, B extends number> = number;
 // Increment Helper without Default Parameters
 type IncrementHelper<I extends number, Acc extends any[]> = 
   Acc['length'] extends I 
@@ -29,6 +29,8 @@ type Sigmoid<A extends number> = Div<
     1,
     Add<1, Exp<E, Mul<A, -1>>>
 >;
+
+type ReLU<A extends number> = Max<0, A>;
 
 type MakeArrayHelper<N extends number, Result extends number[]> = 
   Result['length'] extends N 
@@ -69,7 +71,7 @@ type NeuronForward<
     Input extends number[],
     Weights extends number[],
     Bias extends number
-> = Sigmoid<
+> = ReLU<
     Add<
         Dot<Input, Weights>,
         Bias
@@ -96,9 +98,9 @@ type HiddenSize = 10;
 // type HiddenSize2 = 64;
 // type OutputSize = 10;
 
-type image = MakeArray<InputSize>; 
-type weights1 = MakeMatrix<HiddenSize, InputSize>;
-type biases1 = MakeArray<HiddenSize>;
+// type image = MakeArray<InputSize>; 
+// type weights1 = MakeMatrix<HiddenSize, InputSize>;
+// type biases1 = MakeArray<HiddenSize>;
 
 // type weights2 = MakeMatrix<HiddenSize2, HiddenSize>;
 // type biases2 = MakeArray<HiddenSize2>;
