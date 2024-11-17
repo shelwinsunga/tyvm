@@ -103,24 +103,34 @@ with torch.no_grad():
 # After training, export the weights
 def export_weights(model):
     state_dict = model.state_dict()
-    weights_dict = {
-        'layer1': {
-            'weights': state_dict['layers.0.weight'].cpu().numpy().tolist(),
-            'biases': state_dict['layers.0.bias'].cpu().numpy().tolist()
-        },
-        'layer2': {
-            'weights': state_dict['layers.2.weight'].cpu().numpy().tolist(),
-            'biases': state_dict['layers.2.bias'].cpu().numpy().tolist()
-        },
-        'layer3': {
-            'weights': state_dict['layers.4.weight'].cpu().numpy().tolist(),
-            'biases': state_dict['layers.4.bias'].cpu().numpy().tolist()
-        }
-    }
     
-    with open('mnist_weights.json', 'w') as f:
-        json.dump(weights_dict, f)
+    # Convert weights and biases to nested lists and save as JSON
+    weights1 = state_dict['layers.0.weight'].cpu().numpy().tolist()
+    bias1 = state_dict['layers.0.bias'].cpu().numpy().tolist()
+    
+    weights2 = state_dict['layers.2.weight'].cpu().numpy().tolist()
+    bias2 = state_dict['layers.2.bias'].cpu().numpy().tolist()
+    
+    weights3 = state_dict['layers.4.weight'].cpu().numpy().tolist()
+    bias3 = state_dict['layers.4.bias'].cpu().numpy().tolist()
+    
+    # Save each as separate JSON files
+    with open('weights1.json', 'w') as f:
+        json.dump(weights1, f)
+    with open('bias1.json', 'w') as f:
+        json.dump(bias1, f)
+        
+    with open('weights2.json', 'w') as f:
+        json.dump(weights2, f)
+    with open('bias2.json', 'w') as f:
+        json.dump(bias2, f)
+        
+    with open('weights3.json', 'w') as f:
+        json.dump(weights3, f)
+    with open('bias3.json', 'w') as f:
+        json.dump(bias3, f)
+    
+    print("Weights and biases exported as JSON files")
 
 # Add this after the training loop and testing
 export_weights(model)
-print("Weights exported to mnist_weights.json")

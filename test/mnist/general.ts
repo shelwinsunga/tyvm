@@ -14,7 +14,7 @@ export type Eq<A extends number, B extends number> = boolean;
 export type And<A extends boolean, B extends boolean> = boolean;
 export type Or<A extends boolean, B extends boolean> = boolean;
 export type Max<A extends number, B extends number> = number;
-// Increment Helper without Default Parameters
+
 type IncrementHelper<I extends number, Acc extends any[]> = 
   Acc['length'] extends I 
     ? [...Acc, any]['length'] 
@@ -93,27 +93,38 @@ type LayerForwardImpl<
     ? []
     : [NeuronForward<Input, Weights[Index], Biases[Index]>, ...LayerForwardImpl<Input, Weights, Biases, Add<Index, 1>>];
 
-type InputSize = 64;    
-type HiddenSize = 10;   
-// type HiddenSize2 = 64;
-// type OutputSize = 10;
+type Sqrt<N extends number> = Exp<N, Div<1, 2>>;
 
-// type image = MakeArray<InputSize>; 
-// type weights1 = MakeMatrix<HiddenSize, InputSize>;
-// type biases1 = MakeArray<HiddenSize>;
+type SquareSumArray<Arr extends number[]> = SquareSumArrayImpl<Arr, 0, 0>;
+    
+type SquareSumArrayImpl<Arr extends number[], I extends number, Sum extends number> = I extends Arr['length']
+    ? Sum
+    : SquareSumArrayImpl<Arr, Add<I, 1>, Add<Sum, Exp<Arr[I], 2>>>;
+    
+type L2Norm<Vec extends number[]> = Sqrt<SquareSumArray<Vec>>;
+    
+type Normalize<Arr extends number[]> = NormalizeImpl<Arr, L2Norm<Arr>, 0, []>;
+    
+type NormalizeImpl<Arr extends number[], Norm extends number, I extends number, Result extends number[]> = I extends Arr['length']
+    ? Result
+    : NormalizeImpl<Arr, Norm, Add<I, 1>, [...Result, Div<Arr[I], Norm>]>;
 
-// type weights2 = MakeMatrix<HiddenSize2, HiddenSize>;
-// type biases2 = MakeArray<HiddenSize2>;
+type InputSize = 784;    
+type HiddenSize = 128;   
+type HiddenSize2 = 64;
+type OutputSize = 10;
 
-// type weights3 = MakeMatrix<OutputSize, HiddenSize2>;
-// type biases3 = MakeArray<OutputSize>;
+type image = MakeArray<InputSize>;
 
-// type image = [0.9, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1];
-// type weights1 = [[0.1, -0.2, 0.3, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0], [0.2, 0.3, -0.1, -0.2, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.1, 0.2, 0.3, 0.0, 0.0, 0.0, 0.0, 0.0], [0.4, -0.1, 0.1, 0.2, 0.0, 0.0, 0.0, 0.0, 0.0]];
-// type biases1 = [0.1, 0.1, 0.1, 0.1];
+type weights1 = MakeMatrix<HiddenSize, InputSize>;
+type biases1 = MakeArray<HiddenSize>;
+type weights2 = MakeMatrix<HiddenSize2, HiddenSize>;
+type biases2 = MakeArray<HiddenSize2>;
+type weights3 = MakeMatrix<OutputSize, HiddenSize2>;
+type biases3 = MakeArray<OutputSize>;
 
 type ForwardResult = LayerForward<image, weights1, biases1>;
-// type Forward2Result = LayerForward<ForwardResult, weights2, biases2>;
-// type Forward3Result = LayerForward<Forward2Result, weights3, biases3>;
+type Forward2Result = LayerForward<ForwardResult, weights2, biases2>;
+type Forward3Result = Normalize<LayerForward<Forward2Result, weights3, biases3>>
 
-type Main<Args extends string[]> = Print<ForwardResult>;
+type Main<Args extends string[]> = Print<Forward3Result>;

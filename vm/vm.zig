@@ -31,7 +31,7 @@ extern "c" fn memset(*anyopaque, c_int, usize) *anyopaque;
 
 // const TRACING: bool = true;
 const TRACING: bool = false;
-const STACKTRACING: bool = true;
+const STACKTRACING: bool = false;
 
 var rnd = std.rand.DefaultPrng.init(0);
 
